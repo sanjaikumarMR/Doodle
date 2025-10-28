@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Doodle Chat</title>
+<style>
+  body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+  }
+  #drawBtn, #clearBtn {
+    background: #ff0066;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 18px;
+    margin: 10px;
+  }
+  #clearBtn {
+    background: #444;
+  }
+  canvas {
+    border: 2px solid #aaa;
+    display: none;
+    margin-top: 15px;
+    border-radius: 10px;
+    touch-action: none; /* Important for mobile drawing */
+  }
+</style>
+</head>
+<body>
+
+<h2>🎨 Mobile Doodle Chat</h2>
+<button id="drawBtn">Draw</button>
+<button id="clearBtn" style="display:none;">Clear</button>
+<canvas id="canvas" width="320" height="400"></canvas>
+
+<script>
+const drawBtn = document.getElementById("drawBtn");
+const clearBtn = document.getElementById("clearBtn");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+// Show canvas when draw button is pressed
+drawBtn.addEventListener("click", () => {
+  canvas.style.display = "block";
+  clearBtn.style.display = "inline-block";
+  autoDraw(); // Optional auto doodle when opened
+});
+
+// For mouse
+canvas.addEventListener("mousedown", () => drawing = true);
+canvas.addEventListener("mouseup", () => drawing = false);
+canvas.addEventListener("mousemove", draw);
+
+// For touch
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  drawing = true;
+});
+canvas.addEventListener("touchend", () => drawing = false);
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  drawAt(touch.clientX - rect.left, touch.clientY - rect.top);
+});
+
+function draw(e) {
+  if (!drawing) return;
+  drawAt(e.offsetX, e.offsetY);
+}
+
+function drawAt(x, y) {
+  ctx.fillStyle = "#000";
+  ctx.beginPath();
+  ctx.arc(x, y, 3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// Clear canvas
+clearBtn.addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+// Optional: Auto draw when opening
+function autoDraw() {
+  ctx.strokeStyle = "#0099ff";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(50, 50);
+  ctx.lineTo(270, 200);
+  ctx.lineTo(50, 350);
+  ctx.closePath();
+  ctx.stroke();
+}
+</script>
+
+</body>
+</html>
